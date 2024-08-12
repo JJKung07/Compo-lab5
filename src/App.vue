@@ -6,11 +6,14 @@ const store = useMessageStore()
 const { message } = storeToRefs(store)
 
 import { ref } from 'vue'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/react'
 
 const pageSize = ref<number>(2) // Default page size
 </script>
 
 <template>
+  <SpeedInsights />
   <div class="text-center font-sans text-gray-700 antialias">
     <header>
       <div id="flashMessage" class="animate-fade" v-if="message">
