@@ -7,7 +7,6 @@ const { message } = storeToRefs(store)
 
 import { ref } from 'vue'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Analytics } from '@vercel/analytics/react'
 
 const pageSize = ref<number>(2) // Default page size
 </script>
