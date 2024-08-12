@@ -6,7 +6,7 @@ const store = useMessageStore()
 const { message } = storeToRefs(store)
 
 import { ref } from 'vue'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 const pageSize = ref<number>(2) // Default page size
 </script>
