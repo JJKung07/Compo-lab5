@@ -17,3 +17,9 @@ export interface MessageState {
 export interface EventState {
   event: Event | null
 }
+
+export interface organizer {
+  id: number
+  name: string
+  address: string
+}
