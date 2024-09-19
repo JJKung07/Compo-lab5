@@ -7,6 +7,7 @@ import EventEditView from '@/views/event/EditView.vue'
 import EventLayoutView from '@/views/event/LayoutView.vue'
 import NotFoundView from '@/views/event/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
+import AddEventView from '@/views/EventFormView.vue'
 import nProgress from 'nprogress'
 import EventService from '@/services/EventService'
 import { useEventStore } from '@/stores/event'
@@ -32,18 +33,19 @@ const router = createRouter({
         const id = parseInt(to.params.id as string)
         const eventStore = useEventStore()
         return EventService.getEvent(id)
-        .then((response) => {
-          eventStore.setEvent(response.data)
-        }).catch((error) => {
-          if (error.response && error.response.status === 404) {
-            return {
-              name: '404-resource-view',
-              params: { resource: 'event' }
+          .then((response) => {
+            eventStore.setEvent(response.data)
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 404) {
+              return {
+                name: '404-resource-view',
+                params: { resource: 'event' }
+              }
+            } else {
+              return { name: 'network-error-view ' }
             }
-          } else {
-            return { name: 'network-error-view '}
-          }
-        })
+          })
       },
       children: [
         {
@@ -87,6 +89,11 @@ const router = createRouter({
       path: '/:catchAll(.*)',
       name: 'not-found',
       component: NotFoundView
+    },
+    {
+      path: '/add-event',
+      name: 'add-event',
+      component: AddEventView
     }
   ],
   scrollBehavior(to, from, savedPosition) {
