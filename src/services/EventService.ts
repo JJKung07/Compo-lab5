@@ -1,7 +1,8 @@
 import axios from 'axios'
+import type { Event, organizer } from '@/types'
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL as string,
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: false,
   headers: {
     Accept: 'application/json',
@@ -10,13 +11,16 @@ const apiClient = axios.create({
 })
 
 export default {
-  getEvents(perPage: number, page: number) {
-    return apiClient.get(`/events?_limit=${perPage}&_page=${page}`)
+  getEvents(perPage: Number, page: Number) {
+    return apiClient.get('/events?_limit=' + perPage + '&_page=' + page)
   },
   getEvent(id: number) {
-    return apiClient.get(`/events/${id}`)
+    return apiClient.get('/events/' + id)
   },
-  saveEvent(event: any) {
-    return apiClient.post('/events', event) // Adjust the endpoint as needed
+  saveEvent(event: Event) {
+    return apiClient.post('/events', event)
+  },
+  saveOrganizer(organizer: organizer) {
+    return apiClient.post('/organizer', organizer)
   }
 }

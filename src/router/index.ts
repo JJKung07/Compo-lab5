@@ -7,12 +7,11 @@ import EventEditView from '@/views/event/EditView.vue'
 import EventLayoutView from '@/views/event/LayoutView.vue'
 import NotFoundView from '@/views/event/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
-import AddEventView from '@/views/EventFormView.vue'
 import nProgress from 'nprogress'
 import EventService from '@/services/EventService'
 import { useEventStore } from '@/stores/event'
-import OrganizerFormView from '@/views/OrganizerFormView.vue'
-
+import AddEventView from '@/views/EventFormView.vue'
+import AddOrganizerView from '@/views/OrganizerFormView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -21,8 +20,8 @@ const router = createRouter({
       name: 'event-list-view',
       component: EventListView,
       props: (route) => ({
-        page: parseInt(route.query.page?.toString() || '1'),
-        size: parseInt(route.query.size?.toString() || '2')
+        page: parseInt((route.query?.page as string) || '1'),
+        size: parseInt((route.query?.size as string) || '3')
       })
     },
     {
@@ -30,11 +29,12 @@ const router = createRouter({
       name: 'event-layout-view',
       component: EventLayoutView,
       props: true,
-      beforeEnter: (to) => {
+      beforeEnter: async (to) => {
         const id = parseInt(to.params.id as string)
         const eventStore = useEventStore()
         return EventService.getEvent(id)
           .then((response) => {
+            // need to setup the data for the event
             eventStore.setEvent(response.data)
           })
           .catch((error) => {
@@ -44,7 +44,7 @@ const router = createRouter({
                 params: { resource: 'event' }
               }
             } else {
-              return { name: 'network-error-view ' }
+              return { name: 'network-error-view' }
             }
           })
       },
@@ -56,24 +56,28 @@ const router = createRouter({
           props: true
         },
         {
-          path: '/event/:id/register',
+          path: 'register',
           name: 'event-register-view',
           component: EventRegisterView,
           props: true
         },
         {
-          path: '/event/:id/edit',
+          path: 'edit',
           name: 'event-edit-view',
           component: EventEditView,
           props: true
         }
       ]
     },
-
     {
       path: '/about',
       name: 'about',
       component: AboutView
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'not-found',
+      component: NotFoundView
     },
     {
       path: '/404/:resource',
@@ -87,11 +91,6 @@ const router = createRouter({
       component: NetworkErrorView
     },
     {
-      path: '/:catchAll(.*)',
-      name: 'not-found',
-      component: NotFoundView
-    },
-    {
       path: '/add-event',
       name: 'add-event',
       component: AddEventView
@@ -99,7 +98,7 @@ const router = createRouter({
     {
       path: '/add-organizer',
       name: 'add-organizer',
-      component: OrganizerFormView
+      component: AddOrganizerView
     }
   ],
   scrollBehavior(to, from, savedPosition) {

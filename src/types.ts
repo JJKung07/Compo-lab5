@@ -6,8 +6,8 @@ export interface Event {
   location: string
   date: string
   time: string
-  petAllowed: boolean
-  organizer: string
+  petsAllowed: boolean
+  organizer: organizer
 }
 
 export interface MessageState {
@@ -21,5 +21,4 @@ export interface EventState {
 export interface organizer {
   id: number
   name: string
-  address: string
 }
