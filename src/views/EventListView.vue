@@ -1,66 +1,108 @@
 <script setup lang="ts">
 import EventCard from '@/components/EventCard.vue'
 import { type Event } from '@/types'
-import { ref, onMounted, computed, watchEffect, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, computed, watchEffect } from 'vue'
 import EventService from '@/services/EventService'
+import { useRouter } from 'vue-router'
+import BaseInput from '@/components/BaseInput.vue'
+
+const router = useRouter()
 const events = ref<Event[] | null>(null)
 const totalEvents = ref(0)
-const route = useRoute()
-const router = useRouter()
-const page = ref<number>(parseInt(route.query.page?.toString() || '1'))
-const pageSize = ref<number>(parseInt(route.query.size?.toString() || '3'))
-const hasNextPage = computed(() => {
-  const totalPages = Math.ceil(totalEvents.value / pageSize.value)
+const hasNexPage = computed(() => {
+  const totalPages = Math.ceil(totalEvents.value / 3)
   return page.value < totalPages
 })
-watchEffect(() => {
-  EventService.getEvents(pageSize.value, page.value)
+const props = defineProps({
+  page: {
+    type: Number,
+    required: true
+  }
+})
+const page = computed(() => props.page)
+onMounted(() => {
+  watchEffect(() => {
+    EventService.getEvents(3, page.value)
+      .then((response) => {
+        events.value = response.data
+        totalEvents.value = response.headers['x-total-count']
+      })
+      .catch(() => {
+        router.push({ name: 'network-error-view' })
+      })
+  })
+})
+
+const keyword = ref('')
+function updateKeyword(value: string) {
+  let queryFunction
+  if (keyword.value === '') {
+    queryFunction = EventService.getEvents(3, page.value)
+  } else {
+    queryFunction = EventService.getEventsByKeyword(keyword.value, 3, page.value)
+  }
+  queryFunction
     .then((response) => {
       events.value = response.data
-      totalEvents.value = parseInt(response.headers['x-total-count'])
+      console.log('events', events.value)
+      totalEvents.value = response.headers['x-total-count']
+      console.log('totalEvent', totalEvents.value)
     })
-    .catch((error) => {
-      console.error('There was an error!', error)
+    .catch(() => {
+      router.push({ name: 'NetworkError ' })
     })
-})
-watch(route, (newRoute) => {
-  page.value = parseInt(newRoute.query.page?.toString() || '1')
-  pageSize.value = parseInt(newRoute.query.size?.toString() || '2')
-})
-function updatePageSize(newSize: number) {
-  pageSize.value = newSize
-  router.replace({ name: route.name as string, query: { ...route.query, size: newSize, page: 1 } })
 }
 </script>
 
 <template>
-  <div class="flex flex-col items-center">
-    <h1>Events For Good</h1>
-    <div class="m-2">
-      Page size:
-    <input type="number" v-model.number="pageSize" @change="updatePageSize(pageSize)" />
-    </div>
-  </div>
+  <h1>Events For Good</h1>
   <!-- new element -->
-  <div class="flex flex-col items-center m-2">
+  <main class="flex flex-col items-center">
+    <div class="w-64">
+      <BaseInput
+        v-model="keyword"
+        type="text"
+        label="Search..." 
+        @input="updateKeyword" 
+      />
+    </div>
     <EventCard v-for="event in events" :key="event.id" :event="event" />
-    <EventCategory v-for="event in events" :key="`cat-org-${event.id}`" :event="event" />
-    <div class="flex w-[290px]">
+    <div class="pagination">
       <RouterLink
-        class="flex-1 text-left text-[#2c3e50] no-underline"
-        :to="{ name: 'event-list-view', query: { page: page - 1, size: pageSize } }"
+        id="page-prev"
+        :to="{ name: 'event-list-view', query: { page: page - 1 } }"
         rel="prev"
         v-if="page != 1"
         >&#60; Prev Page</RouterLink
       >
+
       <RouterLink
-        class="flex-1 text-right text-[#2c3e50] no-underline"
-        :to="{ name: 'event-list-view', query: { page: page + 1, size: pageSize } }"
+        id="page-next"
+        :to="{ name: 'event-list-view', query: { page: page + 1 } }"
         rel="next"
-        v-if="hasNextPage"
+        v-if="hasNexPage"
         >Next Page &#62;</RouterLink
       >
     </div>
-  </div>
+  </main>
 </template>
+
+<style scoped>
+.pagination {
+  display: flex;
+  width: 290px;
+}
+.pagination a {
+  flex: 1;
+  text-decoration: none;
+  color: #2c3e50;
+}
+
+#page-prev {
+  text-align: left;
+}
+
+#page-next {
+  text-align: right;
+}
+</style>

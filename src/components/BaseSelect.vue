@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { organizer } from '@/types'
+import type { Organizer } from '@/types'
 
 const modelValue = defineModel()
 interface BaseSelectProps {
   label: string
-  options: organizer[]
+  options: Organizer[]
 }
 const props = withDefaults(defineProps<BaseSelectProps>(), {
   label: ''

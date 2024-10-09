@@ -1,8 +1,7 @@
-import axios from 'axios'
-import type { Event, organizer } from '@/types'
+import axios, { type AxiosResponse } from 'axios'
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL as string,
   withCredentials: false,
   headers: {
     Accept: 'application/json',
@@ -20,7 +19,13 @@ export default {
   saveEvent(event: Event) {
     return apiClient.post('/events', event)
   },
-  saveOrganizer(organizer: organizer) {
-    return apiClient.post('/organizer', organizer)
+  getEventsByKeyword(
+    keyword: string,
+    perPage: number,
+    page: number
+  ): Promise<AxiosResponse<EventItem[]>> {
+    return apiClient.get<EventItem[]>(
+      '/events?title=' + keyword + '&_limit=' + perPage + '&_page=' + page
+    )
   }
 }

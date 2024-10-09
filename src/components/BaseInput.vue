@@ -7,7 +7,6 @@ const props = withDefaults(defineProps<BaseInputProps>(), {
   label: ''
 })
 </script>
-
 <template>
   <label v-if="label">
     {{ props.label }}

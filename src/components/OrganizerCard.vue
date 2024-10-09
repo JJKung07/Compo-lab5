@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type Event } from '@/types'
+import { type Organizer } from '@/types'
 defineProps<{
-  event: Event
+  organizer: Organizer
 }>()
 // const event = ref({
 //   id: 5928101,
@@ -17,14 +17,15 @@ defineProps<{
 </script>
 
 <template>
-  <RouterLink class="event-link" :to="{ name: 'event-detail-view', params: { id: event.id } }">
+  <RouterLink
+    class="organizer-link"
+    :to="{ name: 'organizer-detail-view', params: { id: organizer.id } }"
+  >
     <div
       class="cursor-pointer border border-gray-600 p-[20px] w-[250px] mb-[18px] hover:scale-101 hover:shadow-sp"
     >
-      <h2>{{ event.title }}</h2>
-      <span>by</span>
-      <h5>{{ event.organizer.name }}</h5>
-      <span>{{ event.category }} on {{ event.location }}</span>
+      <h2>Organizer ID: {{ organizer.id }}</h2>
+      <span>{{ organizer.name }} @ {{ organizer.address }}</span>
     </div>
   </RouterLink>
 </template>
@@ -46,7 +47,7 @@ defineProps<{
   font-size: 20px;
   padding: 8px;
 } */
-.event-link {
+.organizer-link {
   text-decoration: none;
   color: #2c3e50;
 }

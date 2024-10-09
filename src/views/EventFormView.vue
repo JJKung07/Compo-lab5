@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Event, organizer } from '@/types'
+import type { Event, Organizer } from '@/types'
+import OrganizerService from '@/services/OrganizerService'
 import { onMounted, ref } from 'vue'
 import EventService from '@/services/EventService'
-import OrganizerService from '@/services/OrganizerService'
 import { useRouter } from 'vue-router'
 import { useMessageStore } from '@/stores/message'
 import BaseInput from '@/components/BaseInput.vue'
@@ -38,11 +38,11 @@ function saveEvent() {
     })
 }
 
-const organizers = ref<organizer[]>([])
+const organizers = ref<Organizer[]>([])
 onMounted(() => {
-  OrganizerService.getOrgaizers()
-    .then((respone) => {
-      organizers.value = respone.data
+  OrganizerService.getOrganizers()
+    .then((response) => {
+      organizers.value = response.data
     })
     .catch(() => {
       router.push({ name: 'network-error-view' })
@@ -56,11 +56,15 @@ onMounted(() => {
     <form @submit.prevent="saveEvent">
       <BaseInput v-model="event.category" type="text" label="Category" />
       <h3>Name & describe your event</h3>
+
       <BaseInput v-model="event.title" type="text" label="Title" />
+
       <BaseInput v-model="event.description" type="text" label="Description" />
+
+      <h3>Where is your event?</h3>
       <BaseInput v-model="event.location" type="text" label="Location" />
       <h3>Who is your organizer?</h3>
-      <label>Select an Organizer</label>
+      <label>Select an </label>
       <BaseSelect v-model="event.organizer.id" :options="organizers" label="Organizer" />
       <button class="button" type="submit">Submit</button>
     </form>

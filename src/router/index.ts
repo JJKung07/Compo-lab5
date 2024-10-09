@@ -5,13 +5,19 @@ import EventDetailView from '@/views/event/DetailView.vue'
 import EventRegisterView from '@/views/event/RegisterView.vue'
 import EventEditView from '@/views/event/EditView.vue'
 import EventLayoutView from '@/views/event/LayoutView.vue'
-import NotFoundView from '@/views/event/NotFoundView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
 import nProgress from 'nprogress'
 import EventService from '@/services/EventService'
-import { useEventStore } from '@/stores/event'
 import AddEventView from '@/views/EventFormView.vue'
+import { useEventStore } from '@/stores/event'
+import OrganizerListView from '@/views/OrganizerListView.vue'
+import OrganizerLayoutView from '@/views/organizer/OrganizerLayoutView.vue'
+import OrganizerService from '@/services/OrganizerService'
+import OrganizerDetailView from '@/views/organizer/OrganizerDetailView.vue'
 import AddOrganizerView from '@/views/OrganizerFormView.vue'
+import { useOrganizerStore } from '@/stores/organizer'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -19,17 +25,14 @@ const router = createRouter({
       path: '/',
       name: 'event-list-view',
       component: EventListView,
-      props: (route) => ({
-        page: parseInt((route.query?.page as string) || '1'),
-        size: parseInt((route.query?.size as string) || '3')
-      })
+      props: (route) => ({ page: parseInt(route.query.page?.toString() || '1') })
     },
     {
       path: '/event/:id',
       name: 'event-layout-view',
       component: EventLayoutView,
       props: true,
-      beforeEnter: async (to) => {
+      beforeEnter: (to) => {
         const id = parseInt(to.params.id as string)
         const eventStore = useEventStore()
         return EventService.getEvent(id)
@@ -70,25 +73,53 @@ const router = createRouter({
       ]
     },
     {
-      path: '/about',
-      name: 'about',
-      component: AboutView
+      path: '/organizer',
+      name: 'organizer-list-view',
+      component: OrganizerListView,
+      props: (route) => ({ page: parseInt(route.query.page?.toString() || '1') })
     },
     {
-      path: '/:catchAll(.*)',
-      name: 'not-found',
-      component: NotFoundView
-    },
-    {
-      path: '/404/:resource',
-      name: '404-resource-view',
-      component: NotFoundView,
-      props: true
+      path: '/organizer/:id',
+      name: 'organizer-layout-view',
+      component: OrganizerLayoutView,
+      props: true,
+      beforeEnter: (to) => {
+        const id = parseInt(to.params.id as string)
+        const eventStore = useOrganizerStore()
+        return OrganizerService.getEvent(id)
+          .then((response) => {
+            // need to setup the data for the event
+            eventStore.setEvent(response.data)
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 404) {
+              return {
+                name: '404-resource-view',
+                params: { resource: 'event' }
+              }
+            } else {
+              return { name: 'network-error-view' }
+            }
+          })
+      },
+      children: [
+        {
+          path: '',
+          name: 'organizer-detail-view',
+          component: OrganizerDetailView,
+          props: true
+        }
+      ]
     },
     {
       path: '/network-error',
       name: 'network-error-view',
       component: NetworkErrorView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView
     },
     {
       path: '/add-event',
@@ -99,6 +130,17 @@ const router = createRouter({
       path: '/add-organizer',
       name: 'add-organizer',
       component: AddOrganizerView
+    },
+    {
+      path: '/404/:resource',
+      name: '404-resource-view',
+      component: NotFoundView,
+      props: true
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'not-found',
+      component: NotFoundView
     }
   ],
   scrollBehavior(to, from, savedPosition) {
@@ -112,6 +154,7 @@ const router = createRouter({
 router.beforeEach(() => {
   nProgress.start()
 })
+
 router.afterEach(() => {
   nProgress.done()
 })

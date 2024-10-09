@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import type { organizer } from '@/types'
+import type { Organizer } from '@/types'
 import { ref } from 'vue'
-import EventService from '@/services/EventService'
+import OrganizerService from '@/services/OrganizerService'
 import { useRouter } from 'vue-router'
 import { useMessageStore } from '@/stores/message'
-const Organizer = ref<organizer>({
+
+const organizer = ref<Organizer>({
   id: 0,
-  name: ''
+  name: '',
+  address: ''
 })
 const router = useRouter()
 const store = useMessageStore()
-function saveEvent() {
-  EventService.saveOrganizer(Organizer.value)
+function saveOrganizer() {
+  OrganizerService.saveEvent(organizer.value)
     .then((response) => {
-      router.push({ name: 'event-detail-view', params: { id: response.data.id } })
-      store.updateMessage('You are successfully add a new organizer for ' + response.data.title)
+      router.push({ name: 'organizer-detail-view', params: { id: response.data.id } })
+      store.updateMessage('You are successfully add a new event for id number ' + response.data.id)
       setTimeout(() => {
         store.resetMessage()
       }, 3000)
@@ -27,14 +29,16 @@ function saveEvent() {
 
 <template>
   <div>
-    <h1>Create an event</h1>
-    <form @submit.prevent="saveEvent">
+    <h1>Create an organizer</h1>
+    <form @submit.prevent="saveOrganizer">
+      <h3>Name & describe your event</h3>
       <label>Name</label>
-      <input v-model="Organizer.name" type="text" placeholder="Name" class="field" />
-      <h3>address of you your organizer</h3>
+      <input v-model="organizer.name" type="text" placeholder="Name" class="field" />
+      <label>Address</label>
+      <input v-model="organizer.address" type="text" placeholder="Address" class="field" />
       <button class="button" type="submit">Submit</button>
     </form>
 
-    <pre>{{ Organizer }}</pre>
+    <pre>{{ organizer }}</pre>
   </div>
 </template>
