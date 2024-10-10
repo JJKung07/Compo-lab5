@@ -19,8 +19,23 @@ const authStore = useAuthStore()
 
 const { value: email } = useField<string>('email')
 const { value: password } = useField<string>('password')
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+import { useMessageStore } from '@/stores/message'
 const onSubmit = handleSubmit((values) => {
-  authStore.login(values.email, values.password)
+  const messageStore = useMessageStore()
+  authStore
+    .login(values.email, values.password)
+    .then(() => {
+      router.push({ name: 'event-list-view' })
+    })
+    .catch(() => {
+      messageStore.updateMessage('could not login')
+      setTimeout(() => {
+        messageStore.resetMessage()
+      }, 3000)
+    })
 })
 </script>
 
@@ -78,7 +93,7 @@ const onSubmit = handleSubmit((values) => {
       </form>
       <p class="mt-10 text-center text-sm text-gray-500">
         Not a member? {{ '' }}
-        <a href="#" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+        <a href="/register" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >Try to register here</a
         >
       </p>

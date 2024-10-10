@@ -3,7 +3,6 @@ import { toRefs } from 'vue'
 import { type Event } from '@/types'
 import { useRouter } from 'vue-router'
 import { useMessageStore } from '@/stores/message'
-
 const props = defineProps<{
   event: Event
   id: String
@@ -13,7 +12,7 @@ const { event } = toRefs(props)
 const router = useRouter()
 const store = useMessageStore()
 const register = () => {
-  store.updateMessage('You are successfully registered for ' + props.event.title)
+  store.updateMessage('You are successuflly registered for ' + props.event.title)
   setTimeout(() => {
     store.resetMessage()
   }, 3000)
@@ -21,10 +20,6 @@ const register = () => {
 }
 </script>
 <template>
-  <p class="m-2">Register event here</p>
-  <button @click="register" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
-  text-gray-900 focus:outline-none bg-white rounded-lg border 
-  border-gray-200 hover:bg-gray-100 hover:text-blue-700 
-  focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 
-  dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Register</button>
+  <p>Register event here</p>
+  <button @click="register">Register</button>
 </template>

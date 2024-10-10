@@ -4,17 +4,16 @@ import { storeToRefs } from 'pinia'
 
 const store = useEventStore()
 const { event } = storeToRefs(store)
-
 </script>
 <template>
   <div v-if="event">
     <h1>{{ event.title }}</h1>
-    <nav class="">
-      <router-link class="font-bold text-gray-700" exact-active-class="text-green-500"  :to="{ name: 'event-detail-view' }">Details</router-link>
+    <nav>
+      <RouterLink :to="{ name: 'event-detail-view' }">Details</RouterLink>
       |
-      <router-link class="font-bold text-gray-700" exact-active-class="text-green-500"  :to="{ name: 'event-register-view' }">Register</router-link>
+      <RouterLink :to="{ name: 'event-register-view' }">Register</RouterLink>
       |
-      <router-link class="font-bold text-gray-700" exact-active-class="text-green-500"  :to="{ name: 'event-edit-view' }">Edit</router-link>
+      <RouterLink :to="{ name: 'event-edit-view' }">Edit</RouterLink>
     </nav>
     <RouterView :event="event" />
   </div>

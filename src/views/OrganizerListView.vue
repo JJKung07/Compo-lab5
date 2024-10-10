@@ -21,10 +21,10 @@ const props = defineProps({
 const page = computed(() => props.page)
 onMounted(() => {
   watchEffect(() => {
-    OrganizerService.getOrganizers() // Fetch all organizers instead of events
+    OrganizerService.getOrganizers()
       .then((response) => {
-        organizers.value = response.data // Populate the organizers array
-        totalOrganizers.value = response.headers['x-total-count'] // Update the total count if applicable
+        organizers.value = response.data
+        totalOrganizers.value = response.headers['x-total-count']
       })
       .catch(() => {
         router.push({ name: 'network-error-view' })
@@ -36,7 +36,7 @@ onMounted(() => {
 <template>
   <h1>Organizer</h1>
   <!-- new element -->
-  <div class="flex flex-col items-center">
+  <main class="flex flex-col items-center">
     <OrganizerCard v-for="organizer in organizers" :key="organizer.id" :organizer="organizer" />
     <div class="pagination">
       <RouterLink
@@ -55,7 +55,7 @@ onMounted(() => {
         >Next Page &#62;</RouterLink
       >
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>

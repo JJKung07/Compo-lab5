@@ -75,28 +75,29 @@ const router = createRouter({
       ]
     },
     {
-      path: '/organizer',
+      path: '/organizers',
       name: 'organizer-list-view',
       component: OrganizerListView,
       props: (route) => ({ page: parseInt(route.query.page?.toString() || '1') })
     },
     {
-      path: '/organizer/:id',
+      path: '/organizers/:id',
       name: 'organizer-layout-view',
       component: OrganizerLayoutView,
       props: true,
       beforeEnter: (to) => {
         const id = parseInt(to.params.id as string)
-        const organizerStore = useOrganizerStore()
-        return OrganizerService.getOrganizer(id) // Change to getOrganizer
+        const eventStore = useOrganizerStore()
+        return OrganizerService.getOrganizer(id)
           .then((response) => {
-            organizerStore.setEvent(response.data) // Update the store with organizer data
+            // need to setup the data for the event
+            eventStore.setEvent(response.data)
           })
           .catch((error) => {
             if (error.response && error.response.status === 404) {
               return {
                 name: '404-resource-view',
-                params: { resource: 'organizer' } // Change resource to organizer
+                params: { resource: 'event' }
               }
             } else {
               return { name: 'network-error-view' }
@@ -133,6 +134,16 @@ const router = createRouter({
       component: AddOrganizerView
     },
     {
+      path: '/login',
+      name: 'login',
+      component: LoginView
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView
+    },
+    {
       path: '/404/:resource',
       name: '404-resource-view',
       component: NotFoundView,
@@ -142,16 +153,6 @@ const router = createRouter({
       path: '/:catchAll(.*)',
       name: 'not-found',
       component: NotFoundView
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: RegisterView
     }
   ],
   scrollBehavior(to, from, savedPosition) {

@@ -22,7 +22,14 @@ const props = defineProps({
 const page = computed(() => props.page)
 onMounted(() => {
   watchEffect(() => {
-    updateKeyword(keyword.value)
+    EventService.getEvents(3, page.value)
+      .then((response) => {
+        events.value = response.data
+        totalEvents.value = response.headers['x-total-count']
+      })
+      .catch(() => {
+        router.push({ name: 'network-error-view' })
+      })
   })
 })
 

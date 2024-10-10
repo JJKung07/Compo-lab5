@@ -10,9 +10,9 @@ export default {
       fontFamily: {
         sans: ['Avenir', 'Helvetica', 'Arial', 'sans-serif']
       },
-      // Animetion
+      //this is animation class
       animation: {
-        fade: 'yellowFade 3s ease-in-out'
+        fade: 'yellowFade 3s ease-in-out;'
       },
       keyframes: {
         yellowFade: {
