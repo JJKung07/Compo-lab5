@@ -85,17 +85,16 @@ const router = createRouter({
       props: true,
       beforeEnter: (to) => {
         const id = parseInt(to.params.id as string)
-        const eventStore = useOrganizerStore()
-        return OrganizerService.getEvent(id)
+        const organizerStore = useOrganizerStore()
+        return OrganizerService.getOrganizer(id) // Change to getOrganizer
           .then((response) => {
-            // need to setup the data for the event
-            eventStore.setEvent(response.data)
+            organizerStore.setEvent(response.data) // Update the store with organizer data
           })
           .catch((error) => {
             if (error.response && error.response.status === 404) {
               return {
                 name: '404-resource-view',
-                params: { resource: 'event' }
+                params: { resource: 'organizer' } // Change resource to organizer
               }
             } else {
               return { name: 'network-error-view' }

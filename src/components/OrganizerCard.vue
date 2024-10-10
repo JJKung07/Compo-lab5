@@ -24,8 +24,8 @@ defineProps<{
     <div
       class="cursor-pointer border border-gray-600 p-[20px] w-[250px] mb-[18px] hover:scale-101 hover:shadow-sp"
     >
+      <h2>{{ organizer.name }}</h2>
       <h2>Organizer ID: {{ organizer.id }}</h2>
-      <span>{{ organizer.name }} @ {{ organizer.address }}</span>
     </div>
   </RouterLink>
 </template>
