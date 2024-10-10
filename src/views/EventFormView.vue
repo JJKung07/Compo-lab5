@@ -20,7 +20,8 @@ const event = ref<Event>({
   organizer: {
     id: 0,
     name: ''
-  }
+  },
+  images: []
 })
 const router = useRouter()
 const store = useMessageStore()
@@ -66,6 +67,8 @@ onMounted(() => {
       <h3>Who is your organizer?</h3>
       <label>Select an </label>
       <BaseSelect v-model="event.organizer.id" :options="organizers" label="Organizer" />
+      <h3>The image of the Event</h3>
+      <ImageUpload v-model="event.images" />
       <button class="button" type="submit">Submit</button>
     </form>
 

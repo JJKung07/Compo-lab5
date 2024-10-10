@@ -22,14 +22,7 @@ const props = defineProps({
 const page = computed(() => props.page)
 onMounted(() => {
   watchEffect(() => {
-    EventService.getEvents(3, page.value)
-      .then((response) => {
-        events.value = response.data
-        totalEvents.value = response.headers['x-total-count']
-      })
-      .catch(() => {
-        router.push({ name: 'network-error-view' })
-      })
+    updateKeyword
   })
 })
 
@@ -59,12 +52,7 @@ function updateKeyword(value: string) {
   <!-- new element -->
   <main class="flex flex-col items-center">
     <div class="w-64">
-      <BaseInput
-        v-model="keyword"
-        type="text"
-        label="Search..." 
-        @input="updateKeyword" 
-      />
+      <BaseInput v-model="keyword" type="text" label="Search..." @input="updateKeyword" />
     </div>
     <EventCard v-for="event in events" :key="event.id" :event="event" />
     <div class="pagination">
