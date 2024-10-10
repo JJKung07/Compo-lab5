@@ -50,6 +50,13 @@ const updatePageSize = (size: number) => {
           <RouterLink
             class="font-bold text-gray-700"
             exact-active-class="text-green-500"
+            :to="{ name: 'organizer-list-view' }"
+            >Organizer</RouterLink
+          >
+          |
+          <RouterLink
+            class="font-bold text-gray-700"
+            exact-active-class="text-green-500"
             :to="{ name: 'add-organizer' }"
             >New Organizer</RouterLink
           >

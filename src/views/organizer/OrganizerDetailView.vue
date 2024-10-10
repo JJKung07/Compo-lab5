@@ -11,5 +11,4 @@ const { organizer } = toRefs(props)
 <template>
   <p><b>ID:</b> {{ organizer.id }}</p>
   <p><b>Name:</b> {{ organizer.name }}</p>
-  <p><b>Address:</b>{{ organizer.address }}</p>
 </template>

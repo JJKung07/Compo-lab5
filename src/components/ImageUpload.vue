@@ -7,7 +7,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => []
 })
-const convertStringToMedia = (str: string[]): any => {
+const convertStringToMedia = (str: string[] = []): any => {
   return str.map((element: string) => {
     return {
       name: element
@@ -24,8 +24,9 @@ const convertMediaToString = (media: any): string[] => {
 }
 const media = ref(convertStringToMedia(props.modelValue))
 const uploadUrl = ref(import.meta.env.VITE_UPLOAD_URL)
-const onChanged = (file: any) => {
-  emit('update:modelValue', convertMediaToString(file))
+const onChanged = (files: any) => {
+  console.log('Files uploaded:', files) // Debugging step
+  emit('update:modelValue', convertMediaToString(files))
 }
 </script>
 <template>
