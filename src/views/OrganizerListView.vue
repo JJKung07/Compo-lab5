@@ -6,29 +6,25 @@ import OrganizerService from '@/services/OrganizerService'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const organizers = ref<Organizer[]>([])
+const organizers = ref<Organizer[] | null>(null)
 const totalOrganizers = ref(0)
-const pageSize = 3 // Number of organizers to show per page
-const hasNextPage = computed(() => {
-  const totalPages = Math.ceil(totalOrganizers.value / pageSize)
+const hasNexPage = computed(() => {
+  const totalPages = Math.ceil(totalOrganizers.value / 3)
   return page.value < totalPages
 })
-
 const props = defineProps({
   page: {
     type: Number,
     required: true
   }
 })
-
 const page = computed(() => props.page)
-
 onMounted(() => {
   watchEffect(() => {
-    OrganizerService.getEvents(pageSize, page.value) // Fetch the correct number of organizers
+    OrganizerService.getOrganizers() // Fetch all organizers instead of events
       .then((response) => {
-        organizers.value = response.data
-        totalOrganizers.value = Number(response.headers['x-total-count']) // Ensure it's a number
+        organizers.value = response.data // Populate the organizers array
+        totalOrganizers.value = response.headers['x-total-count'] // Update the total count if applicable
       })
       .catch(() => {
         router.push({ name: 'network-error-view' })
@@ -39,6 +35,7 @@ onMounted(() => {
 
 <template>
   <h1>Organizer</h1>
+  <!-- new element -->
   <div class="flex flex-col items-center">
     <OrganizerCard v-for="organizer in organizers" :key="organizer.id" :organizer="organizer" />
     <div class="pagination">
@@ -46,7 +43,7 @@ onMounted(() => {
         id="page-prev"
         :to="{ name: 'organizer-list-view', query: { page: page - 1 } }"
         rel="prev"
-        v-if="page > 1"
+        v-if="page != 1"
         >&#60; Prev Page</RouterLink
       >
 
@@ -54,7 +51,7 @@ onMounted(() => {
         id="page-next"
         :to="{ name: 'organizer-list-view', query: { page: page + 1 } }"
         rel="next"
-        v-if="hasNextPage"
+        v-if="hasNexPage"
         >Next Page &#62;</RouterLink
       >
     </div>
@@ -71,9 +68,11 @@ onMounted(() => {
   text-decoration: none;
   color: #2c3e50;
 }
+
 #page-prev {
   text-align: left;
 }
+
 #page-next {
   text-align: right;
 }
